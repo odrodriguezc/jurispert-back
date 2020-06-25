@@ -9,15 +9,17 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
  * collectionOperations={
- *         "get"={"method"="get"}
+ *         "get"={"method"="get"},
+ *          "post"={"method"="post"}
  *      },
  *     itemOperations={
- *         "get"={"method"="get"}
+ *         "get"={"method"="get"},
  *     },
  *  attributes={
  *     "normalization_context"={"groups"={"user:read"}},
@@ -28,48 +30,80 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+
+    const ROLES = [
+        'ROLE_ADMIN',
+        'ROLE_MANAGER',
+        'ROLE_USER'
+    ];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"user:read", "project:read", "participation:read"})
+     * 
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"user:read", "project:read", "participation:read"})
+     * @Groups({"user:read", "project:read", "participation:read", "user:write"})
+     * @Assert\NotBlank(message="L'adresse email est obligatoire")
+     * @Assert\NotNull(message="L'adresse email est obligatoire")
+     * @Assert\Email(message="L'adresse doit respecter le format: 'example@mail.xx'")
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups("user:read")
+     * @Groups({"user:read", "project:read", "user:write"})
+     * @Assert\NotBlank(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur")
+     * @Assert\NotNull(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur")
+     * @Assert\Choice(choices=User::ROLES, message="Choicisez un role parmi les offerts")
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Groups("user:read")
+     * @Groups({"user:read", "user:write"})
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
+     * @Assert\NotNull(message="Le mot de passe ne doit pas être null")
+     * @Assert\Length(min=5, minMessage="le mot de passe doit contenir au moins 5 caracteres")
      */
     private $password;
 
     /**
+     * @Groups("user:write")
+     * @Assert\EqualTo(propertyPath="password", message="Le mot de passe doit etre identique")
+     */
+    public $confirmation;
+
+    /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("user:read")
+     * @Groups({"user:read", "user:write"})
+     * @Assert\NotBlank(message="Un prenon doit etre suministré")
+     * @Assert\NotNull(message="Le prenom ne doit pas être null")
+     * @Assert\Length(min=2, minMessage="Le prenom doit contenir au moins 2 caractère")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("user:read")
+     * @Groups({"user:read", "user:write"})
+     * @Assert\NotBlank(message="Un non doit etre suministré")
+     * @Assert\NotNull(message="Le nom ne doit pas être null")
+     * @Assert\Length(min=2, minMessage="Le nom doit contenir au moins 2 caractère")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("user:read")
+     * @Groups({"user:read", "user:write"})
+     * @Assert\NotBlank(message="Le poste de l'utilisateur doit être suministré")
+     * @Assert\NotNull(message="Le poste ne doit pas être null")
+     * @Assert\Length(min=2, minMessage="Le poste doit contenir au moins 2 caractère")
      */
     private $post;
 
