@@ -45,7 +45,7 @@ class Customer
     private $company;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Project::class, mappedBy="client")
+     * @ORM\ManyToMany(targetEntity=Project::class, mappedBy="customer")
      */
     private $projects;
 
@@ -131,7 +131,7 @@ class Customer
     {
         if (!$this->projects->contains($project)) {
             $this->projects[] = $project;
-            $project->addClient($this);
+            $project->addCustomer($this);
         }
 
         return $this;
@@ -141,7 +141,7 @@ class Customer
     {
         if ($this->projects->contains($project)) {
             $this->projects->removeElement($project);
-            $project->removeClient($this);
+            $project->removeCustomer($this);
         }
 
         return $this;
