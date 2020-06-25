@@ -9,6 +9,7 @@ use App\Entity\Project;
 use App\Entity\Customer;
 use App\Entity\Participation;
 use App\DataFixtures\AbstractFixtures;
+use DateTime;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -71,7 +72,7 @@ class UserFixtures extends AbstractFixtures
             $createdAt = $this->faker->dateTimeBetween('- 6 months');
 
             $project
-                ->setTitle($this->faker->catchPhrae())
+                ->setTitle($this->faker->catchPhrase())
                 ->setShortDescription($this->faker->words(10, true))
                 ->setDescription($this->faker->markdownP())
                 ->setCreatedAt($createdAt)
@@ -80,41 +81,50 @@ class UserFixtures extends AbstractFixtures
                 ->setOwner($this->getRandomReference(User::class))
                 ->setStages($this->stages)
                 ->setStatus($this->faker->randomElement($this->stages))
-                ->setCategory('PROTOTYPE');
-
-            //TASKS
-            $this->createMany(Task::class, mt_rand(3, 10), function (Task $task) use ($createdAt, $project) {
-                $task
-                    ->setTitle($this->faker->catchPhrase())
-                    ->setDescription($this->faker->markdownP())
-                    ->setCreatedAt($createdAt->modify('+' . mt_rand(0, 5) . 'days'))
-                    ->setDeadline($createdAt->modify('+' . mt_rand(3, 15) . 'days'))
-                    ->setProject($project);
-            });
-
-            //EVENTS
-            $this->createMany(Event::class, mt_rand(3, 10), function (Event $event) use ($createdAt, $project) {
-                $event
-                    ->setTitle($this->faker->catchPhrase())
-                    ->setDescription($this->faker->markdownP())
-                    ->setAddress($this->faker->address())
-                    ->setCreatedAt($createdAt->modify('+' . mt_rand(0, 5) . 'days'))
-                    ->setDate($createdAt->modify('+' . mt_rand(3, 15) . 'days'))
-                    ->setProject($project);
-            });
-
-            //PARTICIPATIONS
-            $this->createMany(Participation::class, mt_rand(3, 5), function (Participation $participaion) use ($project) {
-                $role =  ($this->faker->boolean()) ? 'VIEWER' : 'MANAGER';
-
-                $participaion
-                    ->setProject($project)
-                    ->setRole($role)
-                    ->setUser($this->getRandomReference(User::class));
-            });
+                ->setCategory('PROTOTYPE')
+                ->addCustomer($this->getRandomReference(Customer::class));
         });
 
+        //TASKS
+        $this->createMany(Task::class, 50, function (Task $task) {
+            /** @var Project */
+            $project = $this->getRandomReference(Project::class);
+            /** @var \DateTime */
+            $createdAt = $project->getCreatedAt();
+            $task
+                ->setTitle($this->faker->catchPhrase())
+                ->setDescription($this->faker->markdownP())
+                ->setCreatedAt($createdAt->modify('+' . mt_rand(0, 5) . 'days'))
+                ->setDeadline($createdAt->modify('+' . mt_rand(3, 15) . 'days'))
+                ->setProject($project)
+                ->setCompleted($this->faker->boolean());
+        });
 
+        //EVENTS
+        $this->createMany(Event::class, 50, function (Event $event) {
+
+            /** @var Project */
+            $project = $this->getRandomReference(Project::class);
+            /** @var \DateTime */
+            $createdAt = $project->getCreatedAt();
+            $event
+                ->setTitle($this->faker->catchPhrase())
+                ->setDescription($this->faker->markdownP())
+                ->setAddress($this->faker->address())
+                ->setCreatedAt($createdAt->modify('+' . mt_rand(0, 5) . 'days'))
+                ->setDate($createdAt->modify('+' . mt_rand(3, 15) . 'days'))
+                ->setProject($project);
+        });
+
+        //PARTICIPATIONS
+        $this->createMany(Participation::class, 50, function (Participation $participaion) {
+            $role =  ($this->faker->boolean()) ? 'VIEWER' : 'MANAGER';
+
+            $participaion
+                ->setProject($this->getRandomReference(Project::class))
+                ->setRole($role)
+                ->setUser($this->getRandomReference(User::class));
+        });
 
 
 

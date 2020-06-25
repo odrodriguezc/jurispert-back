@@ -52,7 +52,7 @@ class Project
     /**
      * @ORM\ManyToMany(targetEntity=Customer::class, inversedBy="projects")
      */
-    private $client;
+    private $customer;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="projects")
@@ -75,7 +75,7 @@ class Project
     private $tasks;
 
     /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="project")
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="project", cascade="persist")
      */
     private $participations;
 
@@ -91,7 +91,7 @@ class Project
 
     public function __construct()
     {
-        $this->client = new ArrayCollection();
+        $this->customer = new ArrayCollection();
         $this->tasks = new ArrayCollection();
         $this->participations = new ArrayCollection();
         $this->events = new ArrayCollection();
@@ -177,24 +177,24 @@ class Project
     /**
      * @return Collection|Customer[]
      */
-    public function getClient(): Collection
+    public function getCustomer(): Collection
     {
-        return $this->client;
+        return $this->customer;
     }
 
-    public function addClient(Customer $client): self
+    public function addCustomer(Customer $customer): self
     {
-        if (!$this->client->contains($client)) {
-            $this->client[] = $client;
+        if (!$this->customer->contains($customer)) {
+            $this->customer[] = $customer;
         }
 
         return $this;
     }
 
-    public function removeClient(Customer $client): self
+    public function removeCustomer(Customer $customer): self
     {
-        if ($this->client->contains($client)) {
-            $this->client->removeElement($client);
+        if ($this->customer->contains($customer)) {
+            $this->customer->removeElement($customer);
         }
 
         return $this;
