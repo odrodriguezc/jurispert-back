@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TaskRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TaskRepository::class)
+ * @ApiResource(attributes={
+ *     "normalization_context"={"groups"={"task:read"}},
+ *     "denormalization_context"={"groups"={"task:write"}}
+ * })
  */
 class Task
 {
@@ -14,36 +20,43 @@ class Task
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"task:read","project:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"task:read","project:read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"task:read","project:read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"task:read","project:read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"task:read","project:read"})
      */
     private $deadline;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"task:read","project:read"})
      */
     private $completed;
 
     /**
      * @ORM\ManyToOne(targetEntity=Project::class, inversedBy="tasks")
+     * @Groups({"task:read"})
      */
     private $project;
 

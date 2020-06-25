@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\ProjectRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProjectRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProjectRepository::class)
+ * @ApiResource(attributes={
+ *     "normalization_context"={"groups"={"project:read"}},
+ *     "denormalization_context"={"groups"={"project:write"}}
+ * })
  */
 class Project
 {
@@ -16,41 +22,50 @@ class Project
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
+     * 
      */
     private $shortDescription;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
      */
     private $deadline;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"project:read","user:read","task:read", "event:read", "participation:read"})
      */
     private $adversary;
 
     /**
      * @ORM\ManyToMany(targetEntity=Customer::class, inversedBy="projects")
+     * @Groups({"project:read"})
      */
     private $customer;
 
@@ -61,31 +76,38 @@ class Project
 
     /**
      * @ORM\Column(type="json", nullable=true)
+     * @Groups({"project:read","user:read","task:read", "event:read", "participation:read"})
      */
     private $stages = [];
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
      */
     private $status;
 
     /**
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="project")
+     * @Groups({"project:read"})
      */
     private $tasks;
 
     /**
      * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="project", cascade="persist")
+     * @Groups({"project:read"})
+     * 
      */
     private $participations;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
      */
     private $category;
 
     /**
      * @ORM\OneToMany(targetEntity=Event::class, mappedBy="project")
+     * @Groups({"project:read"})
      */
     private $events;
 

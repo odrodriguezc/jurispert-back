@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\ParticipationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ParticipationRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
+ * @ApiResource(attributes={
+ *     "normalization_context"={"groups"={"participation:read"}},
+ *     "denormalization_context"={"groups"={"participation:write"}}
+ * })
  */
 class Participation
 {
@@ -14,21 +20,26 @@ class Participation
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"participation:read", "user:read", "project:read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Project::class, inversedBy="participations")
+     * @Groups({"participation:read"})
      */
     private $project;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="participations")
+     *  
+     * @Groups({"participation:read", "project:read"})
      */
     private $user;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"participation:read", "user:read", "project:read"})
      */
     private $role;
 

@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\CustomerRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CustomerRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
+ *  @ApiResource(attributes={
+ *     "normalization_context"={"groups"={"customer:read"}},
+ *     "denormalization_context"={"groups"={"customer:write"}}
+ * })
  */
 class Customer
 {
@@ -16,31 +22,37 @@ class Customer
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"customer:read","project:read", "user:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customer:read","project:read", "user:read"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customer:read","project:read", "user:read"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"customer:read","project:read", "user:read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"customer:read","project:read", "user:read"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"customer:read","project:read", "user:read"})
      */
     private $company;
 

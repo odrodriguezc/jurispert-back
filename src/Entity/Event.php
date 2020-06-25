@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\EventRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\EventRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
+ * @ApiResource(attributes={
+ *     "normalization_context"={"groups"={"event:read"}},
+ *     "denormalization_context"={"groups"={"event:write"}}
+ * })
  */
 class Event
 {
@@ -14,36 +20,43 @@ class Event
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"event:read","project:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"event:read","project:read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"event:read","project:read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"event:read","project:read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"event:read","project:read"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"event:read","project:read"})
      */
     private $address;
 
     /**
      * @ORM\ManyToOne(targetEntity=Project::class, inversedBy="events")
+     * @Groups({"event:read"})
      */
     private $project;
 
