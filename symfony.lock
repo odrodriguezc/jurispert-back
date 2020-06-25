@@ -16,6 +16,12 @@
             "src/Entity/.gitignore"
         ]
     },
+    "davidbadura/faker-markdown-generator": {
+        "version": "1.0.0"
+    },
+    "davidbadura/markdown-builder": {
+        "version": "1.0.4"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {

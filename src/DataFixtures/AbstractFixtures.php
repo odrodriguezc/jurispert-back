@@ -39,6 +39,7 @@ abstract class AbstractFixtures extends Fixture
 
     // Création et stockage de Faker dans l'instance
     $this->faker = Factory::create('fr_FR');
+    $this->faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($this->faker));
 
     $this->customizeFaker();
 
