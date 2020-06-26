@@ -2,24 +2,30 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @HasLifecycleCallbacks
+ * @UniqueEntity("email")
  * @ApiResource(
  * collectionOperations={
- *         "get"={"method"="get"},
- *          "post"={"method"="post"}
+ *         "get"
  *      },
  *     itemOperations={
- *         "get"={"method"="get"},
+ *         "get",
+ *          "put"={"security":"is_granted('ROLE_USER') and user == object "}
  *     },
  *  attributes={
  *     "normalization_context"={"groups"={"user:read"}},
@@ -58,25 +64,25 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="json")
      * @Groups({"user:read", "project:read", "user:write"})
-     * @Assert\NotBlank(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur")
-     * @Assert\NotNull(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur")
-     * @Assert\Choice(choices=User::ROLES, message="Choicisez un role parmi les offerts")
+     * @Assert\NotBlank(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur", groups="admin")
+     * @Assert\NotNull(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur", groups="admin")
+     * 
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Groups({"user:read", "user:write"})
-     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
-     * @Assert\NotNull(message="Le mot de passe ne doit pas être null")
-     * @Assert\Length(min=5, minMessage="le mot de passe doit contenir au moins 5 caracteres")
+     * @Groups({"user:read"})
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire", groups="admin")
+     * @Assert\NotNull(message="Le mot de passe ne doit pas être null", groups="admin")
+     * @Assert\Length(min=5, minMessage="le mot de passe doit contenir au moins 5 caracteres", groups="admin")
      */
     private $password;
 
     /**
-     * @Groups("user:write")
-     * @Assert\EqualTo(propertyPath="password", message="Le mot de passe doit etre identique")
+     * 
+     * @Assert\EqualTo(propertyPath="password", message="Le mot de passe doit etre identique", groups="admin")
      */
     public $confirmation;
 
@@ -101,9 +107,9 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"user:read", "user:write"})
-     * @Assert\NotBlank(message="Le poste de l'utilisateur doit être suministré")
-     * @Assert\NotNull(message="Le poste ne doit pas être null")
-     * @Assert\Length(min=2, minMessage="Le poste doit contenir au moins 2 caractère")
+     * @Assert\NotBlank(message="Le poste de l'utilisateur doit être suministré", groups="admin")
+     * @Assert\NotNull(message="Le poste ne doit pas être null", groups="admin")
+     * @Assert\Length(min=2, minMessage="Le poste doit contenir au moins 2 caractère", groups="admin")
      */
     private $post;
 
@@ -343,5 +349,15 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    /** @PrePersist */
+    public function createDate()
+    {
+        $date = new DateTime();
+        if (!$this->getCreatedAt()) {
+            $this->createdAt = $date;
+        }
+        $this->updatedAt = $date;
     }
 }
