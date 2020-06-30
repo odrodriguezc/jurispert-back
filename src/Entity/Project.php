@@ -28,20 +28,20 @@ class Project
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "project:write","user:read", "task:read", "event:read", "participation:read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "project:write","user:read", "task:read", "event:read", "participation:read"})
      * 
      */
     private $shortDescription;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "project:write", "user:read", "task:read", "event:read", "participation:read"})
      */
     private $description;
 
@@ -53,24 +53,25 @@ class Project
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "project:write", "user:read", "task:read", "event:read", "participation:read"})
      */
     private $deadline;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"project:read","user:read","task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "project:write", "user:read","task:read", "event:read", "participation:read"})
      */
     private $adversary;
 
     /**
      * @ORM\ManyToMany(targetEntity=Customer::class, inversedBy="projects")
-     * @Groups({"project:read"})
+     * @Groups({"project:read", "project:write"})
      */
     private $customer;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="projects")
+     * @Groups({"project:read", "project:write", "task:read", "event:read", "participation:read"})
      */
     private $owner;
 
@@ -82,32 +83,32 @@ class Project
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "project:write", "user:read", "task:read", "event:read", "participation:read"})
      */
     private $status;
 
     /**
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="project")
-     * @Groups({"project:read"})
+     * @Groups({"project:read", "project:write"})
      */
     private $tasks;
 
     /**
      * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="project", cascade="persist")
-     * @Groups({"project:read"})
+     * @Groups({"project:read", "project:write"})
      * 
      */
     private $participations;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"project:read","user:read", "task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "project:write", "user:read", "task:read", "event:read", "participation:read"})
      */
     private $category;
 
     /**
      * @ORM\OneToMany(targetEntity=Event::class, mappedBy="project")
-     * @Groups({"project:read"})
+     * @Groups({"project:read", "project:write"})
      */
     private $events;
 
