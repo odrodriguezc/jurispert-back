@@ -4,15 +4,31 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EventRepository;
+use Doctrine\ORM\Mapping\PrePersist;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
- * @ApiResource(attributes={
- *     "normalization_context"={"groups"={"event:read"}},
- *     "denormalization_context"={"groups"={"event:write"}}
- * })
+ * @HasLifecycleCallbacks
+ * @ApiResource(
+ *      collectionOperations={
+ *         "get",
+ *          "post",
+ *      },
+ *     itemOperations={
+ *         "get",
+ *          "put",
+ *          "delete"={"security": "is_granted('ROLE_ADMIN')"},
+ *          "patch"
+ *     },
+ *      attributes={
+ *          "normalization_context"={"groups"={"event:read"}},
+ *          "denormalization_context"={"groups"={"event:write"}}
+ *      }
+ * )
  */
 class Event
 {
@@ -26,13 +42,17 @@ class Event
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"event:read","project:read"})
+     * @Groups({"event:read", "event:write","project:read"})
+     *  @Assert\NotNull(message="Le title ne doit pas être null")
+     * @Assert\Length(min=2, minMessage="Le title doit contenir au moins 2 caractère")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"event:read","project:read"})
+     * @Groups({"event:read", "event:write","project:read"})
+     * @Assert\NotNull(message="La description ne doit pas être null")
+     * @Assert\Length(min=10, minMessage="La desription doit contenir au moins 10 caractère")
      */
     private $description;
 
@@ -44,19 +64,22 @@ class Event
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"event:read","project:read"})
+     * @Groups({"event:read", "event:write", "project:read"})
+     * @Assert\NotNull(message="La date limite ne doit pas être null")
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"event:read","project:read"})
+     * @Groups({"event:read", "event:write", "project:read"})
+     * 
      */
     private $address;
 
     /**
      * @ORM\ManyToOne(targetEntity=Project::class, inversedBy="events")
-     * @Groups({"event:read"})
+     * @Groups({"event:read", "event:write"})
+     * @Assert\NotNull(message="Il faut inscrire l'evennement dans un project")
      */
     private $project;
 
@@ -135,5 +158,14 @@ class Event
         $this->project = $project;
 
         return $this;
+    }
+
+    /** @PrePersist */
+    public function createDate()
+    {
+        $date = new \DateTime();
+        if (!$this->getCreatedAt()) {
+            $this->createdAt = $date;
+        }
     }
 }

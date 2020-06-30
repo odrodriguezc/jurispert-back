@@ -66,7 +66,8 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
         ->join($rootAlias . '.project', $alias)
         ->join($alias . '.participations', $aliasParticipations)
         ->andWhere($aliasParticipations . '.user = :user')
-        ->setParameter('user', $this->security->getUser());
+        ->setParameter('user', $this->security->getUser())
+        ->orderBy($rootAlias . '.deadline');;
     }
 
     if ($resourceClass === Event::class) {
@@ -77,7 +78,8 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
         ->join($rootAlias . '.project', $alias)
         ->join($alias . '.participations', $aliasParticipations)
         ->andWhere($aliasParticipations . '.user = :user')
-        ->setParameter('user', $this->security->getUser());
+        ->setParameter('user', $this->security->getUser())
+        ->orderBy($rootAlias . '.date');
     }
 
     if ($resourceClass === Project::class) {

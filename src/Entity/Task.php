@@ -165,6 +165,5 @@ class Task
         if (!$this->getCreatedAt()) {
             $this->createdAt = $date;
         }
-        $this->updatedAt = $date;
     }
 }
