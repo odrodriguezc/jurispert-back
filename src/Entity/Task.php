@@ -4,14 +4,29 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TaskRepository;
+use Doctrine\ORM\Mapping\PrePersist;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TaskRepository::class)
- * @ApiResource(attributes={
- *     "normalization_context"={"groups"={"task:read"}},
- *     "denormalization_context"={"groups"={"task:write"}}
+ * @HasLifecycleCallbacks
+ * @ApiResource(
+ *      collectionOperations={
+ *         "get",
+ *          "post",
+ *      },
+ *     itemOperations={
+ *         "get",
+ *          "put",
+ *          "delete"={"security": "is_granted('ROLE_ADMIN')"},
+ *          "patch"
+ *     },
+ *      attributes={
+ *          "normalization_context"={"groups"={"task:read"}},
+ *          "denormalization_context"={"groups"={"task:write"}}
  * })
  */
 class Task
@@ -26,13 +41,17 @@ class Task
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"task:read","project:read"})
+     * @Groups({"task:read","project:read", "task:write"})
+     * @Assert\NotNull(message="Le title ne doit pas être null")
+     * @Assert\Length(min=2, minMessage="Le title doit contenir au moins 2 caractère")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"task:read","project:read"})
+     * @Groups({"task:read","project:read", "task:write"})
+     * @Assert\NotNull(message="La description ne doit pas être null")
+     * @Assert\Length(min=10, minMessage="La desription doit contenir au moins 10 caractère")
      */
     private $description;
 
@@ -44,19 +63,21 @@ class Task
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"task:read","project:read"})
+     * @Groups({"task:read","project:read", "task:write"})
+     * @Assert\NotNull(message="La date limite ne doit pas être null")
      */
     private $deadline;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"task:read","project:read"})
+     * @Groups({"task:read","project:read", "task:write"})
      */
     private $completed;
 
     /**
      * @ORM\ManyToOne(targetEntity=Project::class, inversedBy="tasks")
-     * @Groups({"task:read"})
+     * @Groups({"task:read", "task:write"})
+     * @Assert\NotNull(message="Il faut inscrire la tache dans un project")
      */
     private $project;
 
@@ -135,5 +156,15 @@ class Task
         $this->project = $project;
 
         return $this;
+    }
+
+    /** @PrePersist */
+    public function createDate()
+    {
+        $date = new \DateTime();
+        if (!$this->getCreatedAt()) {
+            $this->createdAt = $date;
+        }
+        $this->updatedAt = $date;
     }
 }
