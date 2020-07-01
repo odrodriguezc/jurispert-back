@@ -9,9 +9,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
- * @ApiResource(attributes={
- *     "normalization_context"={"groups"={"participation:read"}},
- *     "denormalization_context"={"groups"={"participation:write"}}
+ * @ApiResource(
+ *      collectionOperations={
+ *         "get",
+ *          "post",
+ *      },
+ *     itemOperations={
+ *         "get",
+ *          "put",
+ *          "delete"={"security": "is_granted('ROLE_ADMIN')"},
+ *          "patch"
+ *     },
+ *      attributes={
+ *          "normalization_context"={"groups"={"participation:read"}},
+ *          "denormalization_context"={"groups"={"participation:write"}}
  * })
  */
 class Participation
@@ -26,20 +37,20 @@ class Participation
 
     /**
      * @ORM\ManyToOne(targetEntity=Project::class, inversedBy="participations")
-     * @Groups({"participation:read"})
+     * @Groups({"participation:read", "participation:write"})
      */
     private $project;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="participations")
      *  
-     * @Groups({"participation:read", "project:read"})
+     * @Groups({"participation:read", "project:read","participation:write"})
      */
     private $user;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"participation:read", "user:read", "project:read"})
+     * @Groups({"participation:read", "user:read", "project:read", "participation:write"})
      */
     private $role;
 

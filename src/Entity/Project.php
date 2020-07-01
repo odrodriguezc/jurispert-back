@@ -3,17 +3,33 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PrePersist;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProjectRepository::class)
- * @ApiResource(attributes={
- *     "normalization_context"={"groups"={"project:read"}},
- *     "denormalization_context"={"groups"={"project:write"}}
+ * 
+ * @HasLifecycleCallbacks
+ * @ApiResource(
+ *      collectionOperations={
+ *         "get",
+ *          "post"={"security": "is_granted('ROLE_ADMIN')"}
+ *      },
+ *     itemOperations={
+ *         "get",
+ *          "put",
+ *          "delete"={"security": "is_granted('ROLE_ADMIN')"},
+ *          "patch"
+ *     },
+ *      attributes={
+ *          "normalization_context"={"groups"={"project:read"}},
+ *          "denormalization_context"={"groups"={"project:write"}}
  * })
  */
 class Project
@@ -29,6 +45,8 @@ class Project
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"project:read", "project:write","user:read", "task:read", "event:read", "participation:read"})
+     * @Assert\NotNull(message="Le title ne doit pas être null")
+     * @Assert\Length(min=2, minMessage="Le title doit contenir au moins 2 caractère")
      */
     private $title;
 
@@ -42,6 +60,8 @@ class Project
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"project:read", "project:write", "user:read", "task:read", "event:read", "participation:read"})
+     * @Assert\NotNull(message="La description ne doit pas être null")
+     * @Assert\Length(min=10, minMessage="La description doit contenir au moins 10 caractère")
      */
     private $description;
 
@@ -66,6 +86,7 @@ class Project
     /**
      * @ORM\ManyToMany(targetEntity=Customer::class, inversedBy="projects")
      * @Groups({"project:read", "project:write"})
+     * @Assert\NotNull(message="Le client ne doit pas être null")
      */
     private $customer;
 
@@ -362,5 +383,14 @@ class Project
         }
 
         return $this;
+    }
+
+    /** @PrePersist */
+    public function createDate()
+    {
+        $date = new \DateTime();
+        if (!$this->getCreatedAt()) {
+            $this->createdAt = $date;
+        }
     }
 }
