@@ -5,6 +5,7 @@ namespace App\Doctrine\Extension;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use App\Entity\Event;
+use App\Entity\Participation;
 use App\Entity\Project;
 use App\Entity\Task;
 use Symfony\Component\Security\Core\Security;
@@ -88,6 +89,13 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
       $queryBuilder
         ->join($rootAlias . '.participations', $alias)
         ->andWhere($alias . '.user = :user')
+        ->setParameter('user', $this->security->getUser());
+    }
+
+    if ($resourceClass === Participation::class) {
+      $rootAlias = $queryBuilder->getRootAliases()[0];
+      $queryBuilder
+        ->andWhere($rootAlias . '.user = :user')
         ->setParameter('user', $this->security->getUser());
     }
   }

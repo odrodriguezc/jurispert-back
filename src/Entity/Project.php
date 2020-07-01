@@ -92,7 +92,7 @@ class Project
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="projects")
-     * @Groups({"project:read", "project:write", "task:read", "event:read", "participation:read"})
+     * @Groups({"project:read", "task:read", "event:read", "participation:read"})
      */
     private $owner;
 
@@ -116,7 +116,7 @@ class Project
 
     /**
      * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="project", cascade="persist")
-     * @Groups({"project:read", "project:write"})
+     * @Groups({"project:read"})
      * 
      */
     private $participations;
@@ -129,7 +129,7 @@ class Project
 
     /**
      * @ORM\OneToMany(targetEntity=Event::class, mappedBy="project")
-     * @Groups({"project:read", "project:write"})
+     * @Groups({"project:read"})
      */
     private $events;
 
@@ -391,6 +391,17 @@ class Project
         $date = new \DateTime();
         if (!$this->getCreatedAt()) {
             $this->createdAt = $date;
+        }
+    }
+
+    /** @PrePersist */
+    public function createStages()
+    {
+        if ($this->stages) {
+            return;
+        }
+        if ($this->category === 'PROTOTYPE') {
+            $this->setStages(['PRE-NEGOTIATION', 'COUR-NEGOTIATIONS', 'TRIAL-INSTRUCTIONS', 'TRIAL-ALEGATIONS', 'TRIAL-JUDGMENT']);
         }
     }
 }
