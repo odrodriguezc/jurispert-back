@@ -1,0 +1,19 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	Connexion au back office
+{% endblock %}
+
+{% block body %}
+
+	<div class="container">
+		<h1>Connexion</h1>
+		{{form_start(form)}}
+
+		{{form_widget(form)}}
+
+		<button class="submit">Connexion</button>
+		{{form_end(form)}}
+	</div>
+
+{% endblock %}
