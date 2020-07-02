@@ -11,14 +11,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  * @ApiResource(
  *      collectionOperations={
- *         "get",
  *          "post",
  *      },
  *     itemOperations={
- *         "get",
+ *          "get",
  *          "put",
- *          "delete"={"security": "is_granted('ROLE_ADMIN')"},
- *          "patch"
+ *          "delete",
  *     },
  *      attributes={
  *          "normalization_context"={"groups"={"participation:read"}},
@@ -44,13 +42,13 @@ class Participation
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="participations")
      *  
-     * @Groups({"participation:read", "project:read","participation:write"})
+     * @Groups({"participation:read", "project:read","participation:write", "task:read"})
      */
     private $user;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"participation:read", "user:read", "project:read", "participation:write"})
+     * @Groups({"participation:read", "user:read", "project:read", "participation:write", "task:read"})
      */
     private $role;
 
