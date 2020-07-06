@@ -404,4 +404,50 @@ class Project
             $this->setStages(['PRE-NEGOTIATION', 'COUR-NEGOTIATIONS', 'TRIAL-INSTRUCTIONS', 'TRIAL-ALEGATIONS', 'TRIAL-JUDGMENT']);
         }
     }
+
+    /** @PrePersist */
+    public function createStatus()
+    {
+        if ($this->getStatus()) {
+            return;
+        }
+        if ($this->category === 'PROTOTYPE') {
+            $this->setStatus('PRE-NEGOTIATION');
+        }
+    }
+
+    public function getUsers(): array
+    {
+        /** @var Participation[] */
+        $participations = $this->getParticipations();
+
+        /** @var User[] */
+        $users = [];
+
+        $users[] = $this->getOwner();
+
+        foreach ($participations as $participation) {
+            $users[] = $participation->getUser();
+        }
+
+        return $users;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return array<User> 
+     */
+    public function getManagers(): array
+    {
+        $users = [];
+
+        foreach ($this->participations as $participation) {
+            if ($participation->getRole() === 'MANAGER') {
+                $users[] = $participation->getUser();
+            }
+        }
+
+        return $users;
+    }
 }

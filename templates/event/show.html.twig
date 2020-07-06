@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event
+{% endblock %}
+
+{% block body %}
+	<div class="container">>
+		<h1 class="mt-5 mb-3 text-center">
+			{{event.title}}
+		</h1>
+
+		<table class="table">
+			<tbody>
+				<tr>
+					<th>Id</th>
+					<td>{{ event.id }}</td>
+				</tr>
+				<tr>
+					<th>Titre</th>
+					<td>{{ event.title }}</td>
+				</tr>
+				<tr>
+					<th>Description</th>
+					<td>{{ event.description }}</td>
+				</tr>
+				<tr>
+					<th>Projet</th>
+					<td>
+						<a href=" {{path('project_show', {'id': event.project.id})}} ">
+							{{ event.project.title }}
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<th>Date</th>
+					<td>{{ event.date ? event.date|date('Y-m-d H:i:s') : '' }}</td>
+				</tr>
+				<tr>
+					<th>Adresse</th>
+					<td>{{ event.address }}</td>
+				</tr>
+			</tbody>
+		</table>
+		<hr>
+
+
+		<a class="btn btn-outline-primary mb-2" href="{{ path('event_edit', {'id': event.id}) }}">Modifier</a>
+		{{ include('event/_delete_form.html.twig') }}
+		<a class="btn btn-outline-info" href="{{ path('event_index') }}">Liste d'evennements</a>
+
+
+	</div>
+{% endblock %}

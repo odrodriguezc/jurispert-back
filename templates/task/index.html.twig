@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+
+{% endblock %}
+
+{% block title %}Liste de taches
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mt-5 mb-3 text-center">Liste de Taches</h1>
+
+		<a class="btn btn-link" href="{{ path('task_new') }}">Ajouter une nouvelle tache</a>
+		<table id="tasksTable" class="table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Titre</th>
+					<th>Description</th>
+					<th>Date de creation</th>
+					<th>Date de fin</th>
+					<th>Status</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for task in tasks | reverse %}
+					<tr>
+						<td>Tk{{ task.id }}</td>
+						<td>{{ task.title }}</td>
+						<td>{{ task.description }}</td>
+						<td>{{ task.createdAt ? task.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+						<td>{{ task.deadline ? task.deadline|date('Y-m-d H:i:s') : '' }}</td>
+						<td>{{ task.completed ? 'complete' : 'incomplete' }}</td>
+						<td>
+							<a href="{{ path('task_show', {'id': task.id}) }}">
+								<i class="far fa-eye"></i>
+							</a>
+							<a href="{{ path('task_edit', {'id': task.id}) }}">
+								<i class="far fa-edit"></i>
+							</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="7">no records found</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	</div>
+{% endblock %}
+
+
+{% block javascripts %}
+
+	{{parent()}}
+
+	<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+
+	<script>
+		$(document).ready(function () {
+$('#tasksTable').DataTable({ordering: false});
+});
+	</script>
+
+{% endblock %}

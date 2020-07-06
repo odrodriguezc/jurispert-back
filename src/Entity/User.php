@@ -5,6 +5,7 @@ namespace App\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\PreUpdate;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -64,8 +65,8 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="json")
      * @Groups({"user:read", "project:read", "user:write"})
-     * @Assert\NotBlank(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur", groups="admin")
-     * @Assert\NotNull(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur", groups="admin")
+     * Assert\NotBlank(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur")
+     * Assert\NotNull(message="Un role doit être sumministé à l'utilisateur. Ex. Administrateur" )
      * 
      */
     private $roles = [];
@@ -76,13 +77,13 @@ class User implements UserInterface
      * @Groups({"user:read"})
      * @Assert\NotBlank(message="Le mot de passe est obligatoire", groups="admin")
      * @Assert\NotNull(message="Le mot de passe ne doit pas être null", groups="admin")
-     * @Assert\Length(min=5, minMessage="le mot de passe doit contenir au moins 5 caracteres", groups="admin")
+     * @Assert\Length(min=5, minMessage="le mot de passe doit contenir au moins 5 caracteres")
      */
     private $password;
 
     /**
      * 
-     * @Assert\EqualTo(propertyPath="password", message="Le mot de passe doit etre identique", groups="admin")
+     * @Assert\EqualTo(propertyPath="password", message="Le mot de passe doit etre identique")
      */
     public $confirmation;
 
@@ -109,7 +110,7 @@ class User implements UserInterface
      * @Groups({"user:read", "user:write"})
      * @Assert\NotBlank(message="Le poste de l'utilisateur doit être suministré", groups="admin")
      * @Assert\NotNull(message="Le poste ne doit pas être null", groups="admin")
-     * @Assert\Length(min=2, minMessage="Le poste doit contenir au moins 2 caractère", groups="admin")
+     * @Assert\Length(min=2, minMessage="Le poste doit contenir au moins 2 caractère")
      */
     private $post;
 
@@ -136,6 +137,11 @@ class User implements UserInterface
      * @Groups("user:read")
      */
     private $participations;
+
+    /**
+     * @ORM\OneToOne(targetEntity=PasswordUpdateKey::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $passwordUpdateKey;
 
     public function __construct()
     {
@@ -356,8 +362,32 @@ class User implements UserInterface
     {
         $date = new DateTime();
         if (!$this->getCreatedAt()) {
-            $this->createdAt = $date;
+            $this->setCreatedAt($date);
         }
-        $this->updatedAt = $date;
+        $this->setUpdatedAt($date);
+    }
+
+    /** @PreUpdate */
+    public function autoUpdateDate()
+    {
+        $this->setUpdatedAt(new DateTime());
+    }
+
+    public function getPasswordUpdateKey(): ?PasswordUpdateKey
+    {
+        return $this->passwordUpdateKey;
+    }
+
+    public function setPasswordUpdateKey(?PasswordUpdateKey $passwordUpdateKey): self
+    {
+        $this->passwordUpdateKey = $passwordUpdateKey;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = null === $passwordUpdateKey ? null : $this;
+        if ($passwordUpdateKey->getUser() !== $newUser) {
+            $passwordUpdateKey->setUser($newUser);
+        }
+
+        return $this;
     }
 }

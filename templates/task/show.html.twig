@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}tache
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mb-3 mt-5 text-center">
+			{{task.title}}
+		</h1>
+
+		<table class="table">
+			<tbody>
+				<tr>
+					<th>Id</th>
+					<td>{{ task.id }}</td>
+				</tr>
+				<tr>
+					<th>Titre</th>
+					<td>{{ task.title }}</td>
+				</tr>
+				<tr>
+					<th>Description</th>
+					<td>{{ task.description }}</td>
+				</tr>
+				<tr>
+					<th>Projet</th>
+					<td>
+						<a href=" {{path('project_show', {'id': task.project.id})}} ">
+							{{ task.project.title }}
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<th>Date de creation</th>
+					<td>{{ task.createdAt ? task.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+				</tr>
+				<tr>
+					<th>Date de fin</th>
+					<td>{{ task.deadline ? task.deadline|date('Y-m-d H:i:s') : '' }}</td>
+				</tr>
+				<tr>
+					<th>Status</th>
+					<td>{{ task.completed ? 'Yes' : 'No' }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+
+		<a class="btn btn-outline-primary mb-2" href="{{ path('task_edit', {'id': task.id}) }}">Modifier</a>
+
+		{{ include('task/_delete_form.html.twig') }}
+		<a class="btn btn-outline-info mb-2" href="{{ path('task_index') }}">Liste de taches</a>
+	</div>
+{% endblock %}

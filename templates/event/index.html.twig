@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+
+{% endblock %}
+
+{% block title %}Liste d'evennements
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mt-5 mb-3 text-center">Liste d'evennements</h1>
+		<a class="btn btn-link" href="{{ path('event_new') }}">Ajouter un evennement</a>
+		<table id="eventsTable" class="table table-hover display">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Titre</th>
+					<th>Date</th>
+					<th>Adresse</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for event in events|reverse %}
+					<tr>
+						<td>EV-{{ event.id }}</td>
+						<td>{{ event.title }}</td>
+						<td>{{ event.date ? event.date|date('Y-m-d H:i:s') : '' }}</td>
+						<td>{{ event.address }}</td>
+						<td>
+							<a href="{{ path('event_show', {'id': event.id}) }}">
+								<i class="far fa-eye"></i>
+							</a>
+							<a href="{{ path('event_edit', {'id': event.id}) }}">
+								<i class="far fa-edit"></i>
+							</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="7">no records found</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+
+	{{parent()}}
+
+	<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+
+	<script>
+		$(document).ready(function () {
+$('#eventsTable').DataTable({ordering: false});
+});
+	</script>
+
+{% endblock %}

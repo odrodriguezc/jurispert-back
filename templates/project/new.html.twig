@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% form_theme form _self%}
+
+{% block title %}Nouveau projet
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mb-3 mt-5 text-center">Creer un nouveau Projet</h1>
+
+		{{form_start(form)}}
+
+		{{form_row(form.title)}}
+		{{form_row(form.shortDescription)}}
+		{{form_row(form.description)}}
+		{{form_row(form.adversary)}}
+		{{form_row(form.customer)}}
+		{{form_row(form.deadline)}}
+		{{form_row(form.category)}}
+		{{form_row(form.participations)}}
+
+		<div class="mb-2 mt-2">
+			<button class="btn btn-outline-primary mb-2">Enregistrer</button>
+		</div>
+		{{form_end(form)}}
+
+		<a class="btn btn-outline-info mb-2" href="{{ path('project_index') }}">Liste de projets</a>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+
+	{{parent()}}
+	<script src="/js/participations.js"></script>
+{% endblock %}
+
+{% block _project_participations_row %}
+	<strong>Modifier les participants</strong>
+	{{form_widget(form)}}
+
+	<button id="add-participation" class="btn btn-outline-secondary btn-sm" type="button">Ajouter un participant</button>
+
+
+{% endblock %}
+
+
+{% block _project_participations_entry_row %}
+	<div class="form-group">
+		{{form_widget(form)}}
+		<button class="btn btn-outline-danger btn-sm" data-action="delete" type="button">Supprimer</button>
+		<hr>
+	</div>
+{% endblock %}

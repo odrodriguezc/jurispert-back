@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier evennnemnt
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mb-3 mt-5 text-center">Modifier un evennement</h1>
+
+		{{ include('event/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+		{{ include('event/_delete_form.html.twig') }}
+		<a class="btn btn-outline-info mb-2" href="{{ path('event_index') }}">Liste d'evennements</a>
+
+
+	</div>
+{% endblock %}

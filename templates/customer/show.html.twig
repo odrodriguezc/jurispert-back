@@ -1,11 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Customer
+{% block title %}Client
 {% endblock %}
 
 {% block body %}
 	<div class="container">
-		<h1 class="mb-3 mt-5 text-center">Client</h1>
+		<h1 class="mb-3 mt-5 text-center">
+			{{customer.firstName}}
+			{{customer.lastName}}
+		</h1>
 
 		<table class="table">
 			<tbody>
@@ -35,11 +38,14 @@
 				</tr>
 			</tbody>
 		</table>
+		<hr>
 
-		<a class="btn btn-link" href=" {{ path('customer_index') }} ">Liste de clients</a>
+		<div class="row">
+			<a class="btn btn-link" href=" {{ path('customer_index') }} ">Liste de clients</a>
 
-		<a class="btn btn-link" href="{{ path('customer_edit', {'id': customer.id}) }}">Modifier</a>
+			<a class="btn btn-link" href="{{ path('customer_edit', {'id': customer.id}) }}">Modifier</a>
 
-		{{ include('customer/_delete_form.html.twig') }}
+			{{ include('customer/_delete_form.html.twig') }}
+		</div>
 	</div>
 {% endblock %}

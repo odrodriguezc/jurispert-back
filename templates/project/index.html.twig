@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+
+{% endblock %}
+
+{% block title %}Projets
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mb-3 mt-5 text-center">Liste de projets</h1>
+		<a class="btn btn-link" href="{{ path('project_new') }}">Creer un nouveau Projet</a>
+
+		<table id="projectsTable" class="table table-hover">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Title</th>
+					<th>Description</th>
+					<th>Date de creation</th>
+					<th>Fin prevue</th>
+					<th>Etape</th>
+					<th>Categorie</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for project in projects|reverse %}
+					<tr>
+						<td>PJ-{{ project.id }}</td>
+						<td>{{ project.title }}</td>
+						<td>{{ project.shortDescription }}</td>
+						<td>{{ project.createdAt ? project.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+						<td>{{ project.deadline ? project.deadline|date('Y-m-d H:i:s') : '' }}</td>
+						<td>{{ project.status }}</td>
+						<td>{{ project.category }}</td>
+						<td>
+							<a href="{{ path('project_show', {'id': project.id}) }}">
+								<i class="far fa-eye"></i>
+							</a>
+							<a href="{{ path('project_edit', {'id': project.id}) }}">
+								<i class="far fa-edit"></i>
+							</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="11">Pas d'enregistrements</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+
+	</div>
+{% endblock %}
+{% block javascripts %}
+
+	{{parent()}}
+
+	<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+
+	<script>
+		$(document).ready(function () {
+$('#projectsTable').DataTable({ordering: false});
+});
+	</script>
+
+{% endblock %}

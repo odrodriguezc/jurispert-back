@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle tache
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mt-5 mb-3 text-center">Ajouter une tache</h1>
+
+
+		{{ include('task/_form.html.twig') }}
+
+		<a class="btn btn-outline-info" href="{{ path('task_index') }}">Liste de taches</a>
+	</div>
+{% endblock %}

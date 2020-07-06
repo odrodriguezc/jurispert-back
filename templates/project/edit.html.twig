@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% form_theme form _self%}
+
+{% block title %}Modifier un projet
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mt-5 mb-3 text-center">Modifier une Projet</h1>
+
+		{{ include('project/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+
+		{{ include('project/_delete_form.html.twig') }}
+		<a class="btn btn-outline-info mb-2" href="{{ path('project_index') }}">Liste de projets</a>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+
+	{{parent()}}
+	<script src="/js/participations.js"></script>
+{% endblock %}
+
+{% block _project_participations_row %}
+	<strong>Modifier les participants</strong>
+	{{form_widget(form)}}
+
+	<button id="add-participation" class="btn btn-outline-secondary btn-sm mb-2" type="button">Ajouter un participant</button>
+
+
+{% endblock %}
+
+
+{% block _project_participations_entry_row %}
+	<div class="form-group">
+		{{form_widget(form)}}
+		<button class="btn btn-outline-danger btn-sm mb-2" data-action="delete" type="button">Supprimer</button>
+		<hr>
+	</div>
+{% endblock %}
