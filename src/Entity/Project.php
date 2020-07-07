@@ -109,13 +109,13 @@ class Project
     private $status;
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="project")
-     * @Groups({"project:read", "project:write"})
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="project", orphanRemoval=true)
+     * @Groups({"project:read"})
      */
     private $tasks;
 
     /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="project", cascade="persist")
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="project", cascade="persist",  orphanRemoval=true)
      * @Groups({"project:read"})
      * 
      */
@@ -128,7 +128,7 @@ class Project
     private $category;
 
     /**
-     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="project")
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="project", orphanRemoval=true)
      * @Groups({"project:read"})
      */
     private $events;
@@ -401,7 +401,7 @@ class Project
             return;
         }
         if ($this->category === 'PROTOTYPE') {
-            $this->setStages(['PRE-NEGOTIATION', 'COUR-NEGOTIATIONS', 'TRIAL-INSTRUCTIONS', 'TRIAL-ALEGATIONS', 'TRIAL-JUDGMENT']);
+            $this->setStages(['PRE-NEGOTIATIONS', 'COUR-NEGOTIATIONS', 'TRIAL-INSTRUCTIONS', 'TRIAL-ALEGATIONS', 'TRIAL-JUDGMENT']);
         }
     }
 
@@ -412,7 +412,7 @@ class Project
             return;
         }
         if ($this->category === 'PROTOTYPE') {
-            $this->setStatus('PRE-NEGOTIATION');
+            $this->setStatus('PRE-NEGOTIATIONS');
         }
     }
 

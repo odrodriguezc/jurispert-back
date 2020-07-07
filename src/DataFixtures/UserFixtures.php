@@ -19,7 +19,7 @@ class UserFixtures extends AbstractFixtures
 
     protected UserPasswordEncoderInterface $encoder;
 
-    protected $stages = ['PRE-NEGOTIATION', 'COUR-NEGOTIATIONS', 'TRIAL-INSTRUCTIONS', 'TRIAL-ALEGATIONS', 'TRIAL-JUDGMENT'];
+    protected $stages = ['PRE-NEGOTIATIONS', 'COUR-NEGOTIATIONS', 'TRIAL-INSTRUCTIONS', 'TRIAL-ALEGATIONS', 'TRIAL-JUDGMENT'];
 
     public function __construct(UserPasswordEncoderInterface $encoder)
     {

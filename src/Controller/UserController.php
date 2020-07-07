@@ -127,6 +127,14 @@ class UserController extends AbstractController
      */
     public function delete(Request $request, User $user): Response
     {
+
+        if ($this->isGranted('USER_EDIT', $user) === false) {
+
+            $this->addFlash('danger', "Vous n'avez pas les droits");
+
+            return $this->redirectToRoute('user_index');
+        }
+
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($user);
@@ -156,7 +164,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('user_index');
+            return $this->redirect('http://localhost:4200/projects');
         }
 
         return $this->render('user/editPassword.html.twig', [
